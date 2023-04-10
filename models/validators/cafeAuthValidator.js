@@ -54,6 +54,7 @@ const cafeInfoSchema = Joi.object({
   }),
   location: Joi.string().required().messages({
     'any.required': 'موقعیت مکانی الزامی است',
+    'string.empty': 'موقعیت مکانی الزامی است',
   }),
   accountNumber: Joi.string().required().messages({
     'any.required': 'شماره حساب بانکی الزامی است',
