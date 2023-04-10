@@ -1,4 +1,5 @@
 const authValidator = require('../models/validators/cafeAuthValidator');
+const config = require('../configs/config');
 const { Cafe } = require('../models');
 
 const registerHandler = async (req, res) => {
@@ -72,8 +73,8 @@ const loginHandler = async (req, res) => {
     cafename: cafe.cafename,
   };
 
-  const token = jwt.sign(payload, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRATION,
+  const token = jwt.sign(payload, config.JWT_SECRET, {
+    expiresIn: config.JWT_EXPIRATION,
   });
 
   res.cookie('token', token, {

@@ -1,4 +1,3 @@
-require('dotenv').config();
 const express = require('express');
 const userAuthRoute = require('./routes/userAuthRoutes');
 const cafeAuthRoute = require('./routes/cafeAuthRoutes');
@@ -23,5 +22,4 @@ app.get('/', (req, res) => res.status(200).send('This is an api for cafeista'));
 
 app.get('*', (req, res) => res.status(404).send('This page not found'));
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT || 3000, () => console.log(`Running on Port ${PORT}`));
+app.listen(3000, () => console.log('Running on Port 3000'));

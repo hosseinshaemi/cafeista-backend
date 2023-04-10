@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const config = require('../configs/config');
 const authValidator = require('../models/validators/userAuthValidator');
 const { User } = require('../models');
 const getRandumNumber = require('../utils/random');
@@ -72,8 +73,8 @@ const loginHandler = async (req, res) => {
     email: user.email,
   };
 
-  const token = jwt.sign(payload, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRATION,
+  const token = jwt.sign(payload, config.JWT_SECRET, {
+    expiresIn: config.JWT_EXPIRATION,
   });
 
   res.cookie('token', token, {
