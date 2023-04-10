@@ -1,8 +1,13 @@
-const authValidator = require('../models/validators/cafeAuthValidator');
+const {
+  cafeSchema,
+  cafeInfoSchema,
+} = require('../models/validators/cafeAuthValidator');
 const { Cafe } = require('../models');
+const getRandomNumber = require('../utils/random');
+const sendEmail = require('../utils/mailer');
 
 const registerHandler = async (req, res) => {
-  const result = authValidator.validate(req.body);
+  const result = cafeSchema.validate(req.body);
   if (result.error) {
     const errArray = [];
     result.error.details.forEach((e) => errArray.push(e.message));
@@ -12,20 +17,29 @@ const registerHandler = async (req, res) => {
     });
   }
 
-  const { email, firstname, lastname, cafename } = req.body;
+  const cafeObj = {
+    ...req.body,
+    cafename: '',
+    cafephonenumber: '',
+    address: '',
+    location: '',
+    accountNumber: '',
+  };
 
   try {
-    const cafe = await Cafe.create(req.body);
-    const verCode = getRandumNumber(4);
+    const cafe = await Cafe.create(cafeObj);
+    const verCode = getRandomNumber(4);
     cafe.verificationCode = verCode;
     await cafe.save();
     sendEmail(
-      email,
-      `${cafename} صاحب کافه ${lastname} ${firstname}`,
+      req.body.email,
+      `${req.body.lastname} ${req.body.firstname} کد تاییدیه برای`,
       'کد تاییدیه',
       verCode
     );
-    return res.status(200).json({ successfull: true });
+    return res
+      .status(200)
+      .json({ successfull: true, message: 'کد تایید برای شما ارسال شد' });
   } catch (error) {
     const errArray = [];
     error.errors.forEach((e) => errArray.push(e.message));
@@ -46,7 +60,6 @@ const verifyCodeHandler = async (req, res) => {
 
   if (cafe.verificationCode === code) {
     cafe.isVerified = true;
-    cafe.verificationCode = getRandumNumber(4);
     await cafe.save();
     return res
       .status(200)
@@ -56,6 +69,53 @@ const verifyCodeHandler = async (req, res) => {
   return res
     .status(200)
     .json({ successfull: false, message: 'احراز هویت با شکست مواجه شد' });
+};
+
+const cafeInfoHandler = async (req, res) => {
+  const result = cafeInfoSchema.validate(req.body);
+  if (result.error) {
+    const errArray = [];
+    result.error.details.forEach((e) => errArray.push(e.message));
+    return res.status(422).json({
+      successfull: false,
+      message: errArray,
+    });
+  }
+
+  const cafe = await Cafe.findOne({
+    where: { email: req.body.email, verificationCode: req.body.code },
+  });
+
+  if (!cafe)
+    return res
+      .status(422)
+      .json({ successfull: false, message: 'کاربر یافت نشد' });
+
+  if (!cafe.isVerified)
+    return res
+      .status(401)
+      .json({ successfull: false, message: 'حساب شما تایید نشده است' });
+
+  cafe.cafename = req.body.cafename;
+  cafe.cafephonenumber = req.body.cafephonenumber;
+  cafe.address = req.body.address;
+  cafe.location = req.body.location;
+  cafe.accountNumber = req.body.accountNumber;
+  cafe.verificationCode = getRandomNumber(4);
+  try {
+    await cafe.save();
+  } catch (error) {
+    const errArray = [];
+    error.errors.forEach((e) => errArray.push(e.message));
+    return res.status(422).json({
+      successfull: false,
+      message: errArray,
+    });
+  }
+
+  return res
+    .status(200)
+    .json({ successfull: true, messgae: 'ثبت نام موفقیت آمیز بود' });
 };
 
 const loginHandler = async (req, res) => {
@@ -83,4 +143,9 @@ const loginHandler = async (req, res) => {
   res.status(200).json({ successfull: true, message: 'ورود موفقیت آمیز بود' });
 };
 
-module.exports = { registerHandler, verifyCodeHandler, loginHandler };
+module.exports = {
+  registerHandler,
+  verifyCodeHandler,
+  cafeInfoHandler,
+  loginHandler,
+};
