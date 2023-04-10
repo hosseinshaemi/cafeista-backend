@@ -13,7 +13,9 @@ const Cafe = sequelize.define('cafes', {
   email: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
+    unique: {
+      msg: 'این ایمیل قبلا ثبت نام شده است',
+    },
   },
   password: {
     type: DataTypes.STRING,
@@ -22,7 +24,9 @@ const Cafe = sequelize.define('cafes', {
   phonenumber: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
+    unique: {
+      msg: 'این شماره موبایل قبلا ثبت نام شده است',
+    },
   },
   isVerified: {
     type: DataTypes.BOOLEAN,
@@ -39,7 +43,9 @@ const Cafe = sequelize.define('cafes', {
   cafephonenumber: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
+    unique: {
+      msg: 'این شماره ثابت قبلا ثبت نام شده است',
+    },
   },
   address: {
     type: DataTypes.STRING,
@@ -48,14 +54,17 @@ const Cafe = sequelize.define('cafes', {
   location: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
+    unique: {
+      msg: 'این موقعیت مکانی برای کافه ای دیگر است',
+    },
   },
   accountNumber: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
+    unique: {
+      msg: 'این شماره حساب برای کافه دیگری ثبت شده است',
+    },
   },
 });
-
 
 module.exports = Cafe;

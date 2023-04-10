@@ -1,16 +1,14 @@
 const Joi = require('joi');
 const { joiPasswordExtendCore } = require('joi-password');
 const joiPassword = Joi.extend(joiPasswordExtendCore);
-const schema = Joi.object({
+
+const cafeSchema = Joi.object({
   firstname: Joi.string().required(),
   lastname: Joi.string().required(),
   email: Joi.string().email().required().messages({
     'string.email': 'ایمیل به صورت صحیح وارد نشده است',
     'any.required': 'ایمیل باید وارد شود',
   }),
- /*  password: Joi.string().min(6).required().messages({
-    'string.min': 'پسورد باید حداقل دارای شش کاراکتر باشد',
-  }), */
   password: joiPassword
     .string()
     .minOfSpecialCharacters(1)
@@ -38,6 +36,9 @@ const schema = Joi.object({
       'string.pattern.base': 'در فرمت شماره موبایل ایران نیست',
       'any.required': 'شماره همراه باید وارد شود',
     }),
+}).options({ abortEarly: false });
+
+const cafeInfoSchema = Joi.object({
   cafename: Joi.string().required().messages({
     'any.required': 'نام کافه باید وارد شود',
   }),
@@ -57,6 +58,6 @@ const schema = Joi.object({
   accountNumber: Joi.string().required().messages({
     'any.required': 'شماره حساب بانکی الزامی است',
   }),
-}).options({ abortEarly: false });
+}).options({ abortEarly: false, allowUnknown: true });
 
-module.exports = schema;
+module.exports = { cafeSchema, cafeInfoSchema };
