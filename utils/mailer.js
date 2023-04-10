@@ -1,8 +1,8 @@
-const nodemailer = require("nodemailer");
-const smtpTransport = require("nodemailer-smtp-transport");
+const nodemailer = require('nodemailer');
+const smtpTransport = require('nodemailer-smtp-transport');
 
 const transporterDetails = smtpTransport({
-  service: "gmail",
+  service: 'gmail',
   secure: true,
   auth: {
     user: process.env.EMAIL_USERNAME,
