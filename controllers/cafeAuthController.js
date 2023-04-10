@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const {
   cafeSchema,
   cafeInfoSchema,
@@ -71,7 +72,33 @@ const verifyCodeHandler = async (req, res) => {
     .json({ successfull: false, message: 'احراز هویت با شکست مواجه شد' });
 };
 
+const resendCodeHandler = async (req, res) => {
+  console.log('Request PUT');
+  const { email } = req.body;
+  const cafe = await Cafe.findOne({ where: { email } });
+  if (!cafe)
+    return res
+      .status(422)
+      .json({ successfull: false, message: 'این ایمیل وجود ندارد' });
+
+  const firstname = cafe.firstname,
+    lastname = cafe.lastname;
+  const verCode = getRandomNumber(4);
+  cafe.verificationCode = verCode;
+  await cafe.save();
+  sendEmail(
+    email,
+    `${lastname} ${firstname} کد مجدد برای`,
+    'کد تاییدیه',
+    verCode
+  );
+  return res
+    .status(200)
+    .json({ successfull: true, message: 'کد تایید مجدد برای شما ارسال گردید' });
+};
+
 const cafeInfoHandler = async (req, res) => {
+  req.body.location = '10.00 10.00';
   const result = cafeInfoSchema.validate(req.body);
   if (result.error) {
     const errArray = [];
@@ -146,6 +173,7 @@ const loginHandler = async (req, res) => {
 module.exports = {
   registerHandler,
   verifyCodeHandler,
+  resendCodeHandler,
   cafeInfoHandler,
   loginHandler,
 };

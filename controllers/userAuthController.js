@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const authValidator = require('../models/validators/userAuthValidator');
 const { User } = require('../models');
-const getRandumNumber = require('../utils/random');
+const getRandomNumber = require('../utils/random');
 const sendEmail = require('../utils/mailer');
 
 const registerHandler = async (req, res) => {
@@ -20,11 +20,13 @@ const registerHandler = async (req, res) => {
 
   try {
     const user = await User.create(req.body);
-    const verCode = getRandumNumber(4);
+    const verCode = getRandomNumber(4);
     user.verificationCode = verCode;
     await user.save();
     sendEmail(email, `${lastname} ${firstname}`, 'کد تاییدیه', verCode);
-    return res.status(200).json({ successfull: true });
+    return res
+      .status(200)
+      .json({ successfull: true, message: 'ثبت نام موفقیت آمیز بود' });
   } catch (error) {
     const errArray = [];
     error.errors.forEach((e) => errArray.push(e.message));
@@ -45,7 +47,7 @@ const verifyCodeHandler = async (req, res) => {
 
   if (user.verificationCode === code) {
     user.isVerified = true;
-    user.verificationCode = getRandumNumber(4);
+    user.verificationCode = getRandomNumber(4);
     await user.save();
     return res
       .status(200)
@@ -57,12 +59,36 @@ const verifyCodeHandler = async (req, res) => {
     .json({ successfull: false, message: 'احراز هویت با شکست مواجه شد' });
 };
 
+const resendCodeHandler = async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ where: { email } });
+  if (!user)
+    return res
+      .status(422)
+      .json({ successfull: false, message: 'این ایمیل وجود ندارد' });
+
+  const firstname = user.firstname,
+    lastname = user.lastname;
+  const verCode = getRandomNumber(4);
+  user.verificationCode = verCode;
+  await user.save();
+  sendEmail(
+    email,
+    `${lastname} ${firstname} کد مجدد برای`,
+    'کد تاییدیه',
+    verCode
+  );
+  return res
+    .status(200)
+    .json({ successfull: true, message: 'کد تایید مجدد برای شما ارسال گردید' });
+};
+
 const loginHandler = async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ where: { email, password } });
   if (!user) {
     return res
-      .status(422)
+      .status(401)
       .json({ successfull: false, message: 'کاربری با این مشخصات یافت نشد' });
   }
 
@@ -83,4 +109,4 @@ const loginHandler = async (req, res) => {
   res.status(200).json({ successfull: true, message: 'ورود موفقیت آمیز بود' });
 };
 
-module.exports = { registerHandler, verifyCodeHandler, loginHandler };
+module.exports = { registerHandler, verifyCodeHandler, resendCodeHandler, loginHandler };
