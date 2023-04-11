@@ -153,7 +153,11 @@ const loginHandler = async (req, res) => {
       .status(422)
       .json({ successfull: false, message: 'کاربری با این مشخصات یافت نشد' });
   }
-
+  if (!cafe.isVerified) {
+    return res
+      .status(401)
+      .json({ successfull: false, message: 'حساب نیازمند تایید است' });
+  }
   const payload = {
     email: cafe.email,
     cafename: cafe.cafename,
