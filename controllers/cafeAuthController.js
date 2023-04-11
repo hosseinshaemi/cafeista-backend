@@ -24,7 +24,7 @@ const registerHandler = async (req, res) => {
     cafephonenumber: '',
     address: '',
     location: '',
-    accountNumber: '',
+    accountNumber: Number.toString(getRandomNumber(10)),
   };
 
   try {
