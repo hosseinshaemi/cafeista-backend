@@ -92,6 +92,11 @@ const loginHandler = async (req, res) => {
       .json({ successfull: false, message: 'کاربری با این مشخصات یافت نشد' });
   }
 
+  if (!uesr.isVerified) {
+    return res
+      .status(401)
+      .json({ successfull: false, message: 'حساب نیازمند تایید است' });
+  }
   const payload = {
     firstname: user.firstname,
     lastname: user.lastname,
@@ -109,4 +114,9 @@ const loginHandler = async (req, res) => {
   res.status(200).json({ successfull: true, message: 'ورود موفقیت آمیز بود' });
 };
 
-module.exports = { registerHandler, verifyCodeHandler, resendCodeHandler, loginHandler };
+module.exports = {
+  registerHandler,
+  verifyCodeHandler,
+  resendCodeHandler,
+  loginHandler,
+};
