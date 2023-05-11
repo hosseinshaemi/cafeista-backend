@@ -3,6 +3,8 @@ const authValidator = require('../models/validators/userAuthValidator');
 const { User } = require('../models');
 const getRandomNumber = require('../utils/random');
 const sendEmail = require('../utils/mailer');
+const { where } = require('../configs/database');
+const { update } = require('../models/User');
 
 const registerHandler = async (req, res) => {
   const result = authValidator.validate(req.body);
@@ -114,9 +116,39 @@ const loginHandler = async (req, res) => {
   res.status(200).json({ successfull: true, message: 'ورود موفقیت آمیز بود' });
 };
 
+const getProfile = async (req, res) => {};
+
+const updateUserProfile = async (req, res) => {
+  const { email, password } = req.user;
+  const user = await User.find({ where: { email, password } });
+  if (user) {
+    user.firstname = req.body.firstname || user.firstname;
+    user.lastname = req.body.lastname || user.lastname;
+    user.email = req.body.email;
+    user.phonenumber = req.body.phonenumber;
+    const updateUser = await User.update(user);
+    res.json({
+      firstname: updateUser.firstname,
+      lastname: updateUser.lastname,
+      email: updateUser.email,
+      phonenumber: updateUser.phonenumber
+
+    });
+  }
+  else{
+    res.status(404)
+       .json({
+        success:false,
+        msg: 'کاربر پیدا نشد'
+       });
+  }
+};
+
 module.exports = {
   registerHandler,
   verifyCodeHandler,
   resendCodeHandler,
   loginHandler,
+  getProfile,
+  updateUserProfile,
 };

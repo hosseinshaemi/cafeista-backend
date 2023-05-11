@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const userAuthRoute = require('./routes/userAuthRoutes');
 const cafeAuthRoute = require('./routes/cafeAuthRoutes');
+const userAuthorization = require('./middlewares/userAuthorization');
 const app = express();
 const db = require('./configs/database');
 require('./models');
@@ -21,6 +22,7 @@ app.use(
     credentials: true,
   })
 );
+app.use(userAuthorization);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use('/api/user', userAuthRoute);
