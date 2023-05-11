@@ -116,7 +116,25 @@ const loginHandler = async (req, res) => {
   res.status(200).json({ successfull: true, message: 'ورود موفقیت آمیز بود' });
 };
 
-const getProfile = async (req, res) => {};
+const getProfile = async (req, res) => {
+  const {email, password}  = req.user;
+  const user = await User.find({where: {email,password}});
+  if(user){
+    res.json({
+      firstname: user.firstname,
+      lastname: user.lastname,
+      email: user.email,
+      phonenumber:user.phonenumber
+    });
+  }
+  else{
+    res.status(404)
+       .json({
+        succes: false,
+        msg: 'کاربر پیدا نشد'
+       })
+  }
+};
 
 const updateUserProfile = async (req, res) => {
   const { email, password } = req.user;
