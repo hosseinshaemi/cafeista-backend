@@ -94,7 +94,7 @@ const loginHandler = async (req, res) => {
       .json({ successfull: false, message: 'کاربری با این مشخصات یافت نشد' });
   }
 
-  if (!uesr.isVerified) {
+  if (!user.isVerified) {
     return res
       .status(401)
       .json({ successfull: false, message: 'حساب نیازمند تایید است' });
@@ -117,48 +117,44 @@ const loginHandler = async (req, res) => {
 };
 
 const getProfile = async (req, res) => {
-  const {email, password}  = req.user;
-  const user = await User.find({where: {email,password}});
-  if(user){
+  const { email, password } = req.user;
+  const user = await User.findOne({ where: { email } });
+  if (user) {
     res.json({
       firstname: user.firstname,
       lastname: user.lastname,
       email: user.email,
-      phonenumber:user.phonenumber
+      phonenumber: user.phonenumber,
     });
-  }
-  else{
-    res.status(404)
-       .json({
-        succes: false,
-        msg: 'کاربر پیدا نشد'
-       })
+  } else {
+    res.status(404).json({
+      succes: false,
+      msg: 'کاربر پیدا نشد',
+    });
   }
 };
 
 const updateUserProfile = async (req, res) => {
-  const { email, password } = req.user;
-  const user = await User.find({ where: { email, password } });
+  const { email } = req.user;
+  const user = await User.findOne({ where: { email } });
   if (user) {
     user.firstname = req.body.firstname || user.firstname;
     user.lastname = req.body.lastname || user.lastname;
-    user.email = req.body.email;
-    user.phonenumber = req.body.phonenumber;
-    const updateUser = await User.update(user);
+    user.email = req.body.email || user.email;
+    user.phonenumber = req.body.phonenumber || user.phonenumber;
+    user.email = req.body.email || user.email;
+    await user.save();
     res.json({
-      firstname: updateUser.firstname,
-      lastname: updateUser.lastname,
-      email: updateUser.email,
-      phonenumber: updateUser.phonenumber
-
+      firstname: user.firstname,
+      lastname: user.lastname,
+      email: user.email,
+      phonenumber: user.phonenumber,
     });
-  }
-  else{
-    res.status(404)
-       .json({
-        success:false,
-        msg: 'کاربر پیدا نشد'
-       });
+  } else {
+    res.status(404).json({
+      success: false,
+      msg: 'کاربر پیدا نشد',
+    });
   }
 };
 

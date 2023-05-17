@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const cookies = require('cookie-parser');
 const userAuthRoute = require('./routes/userAuthRoutes');
 const cafeAuthRoute = require('./routes/cafeAuthRoutes');
 const userAuthorization = require('./middlewares/userAuthorization');
@@ -22,7 +23,8 @@ app.use(
     credentials: true,
   })
 );
-app.use(userAuthorization);
+app.use(cookies());
+app.use('/api/user/profile', userAuthorization);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use('/api/user', userAuthRoute);
