@@ -158,6 +158,20 @@ const updateUserProfile = async (req, res) => {
   }
 };
 
+const updatePassword = async (req, res) => {
+  const { email } = req.user;
+  const user = User.findOne({ where: { email } });
+  if (req.body.curPass === req.body.newPass) {
+    user.password = req.body.newPass;
+  } else {
+    res.status(404).json({
+      success: false,
+      msg: 'رمز فعلی اشتباه می‌باشد'
+    });
+  }
+  await user.save();
+};
+
 module.exports = {
   registerHandler,
   verifyCodeHandler,
@@ -165,4 +179,5 @@ module.exports = {
   loginHandler,
   getProfile,
   updateUserProfile,
+  updatePassword,
 };

@@ -3,7 +3,7 @@ const {
   cafeSchema,
   cafeInfoSchema,
 } = require('../models/validators/cafeAuthValidator');
-const { Cafe } = require('../models');
+const { Cafe, Category, Item } = require('../models');
 const getRandomNumber = require('../utils/random');
 const sendEmail = require('../utils/mailer');
 
@@ -174,10 +174,29 @@ const loginHandler = async (req, res) => {
   res.status(200).json({ successfull: true, message: 'ورود موفقیت آمیز بود' });
 };
 
+const showMenu = async (req, res) => {
+  let menu = [];
+  let items = [];
+  const cafeId = req.body.cafe_id;
+  const category = await Category.findAll({ where: { cafeId } });
+  category.forEach(async (index) => {
+    const indexId = index.id;
+    const itemofCategory = await Item.findAll({ where: { indexId } });
+    itemofCategory.forEach(async (eachitem) => {
+      items.push(eachitem);
+    });
+    menu.push({
+      name: index.name,
+      items: items,
+    });
+  });
+};
+
 module.exports = {
   registerHandler,
   verifyCodeHandler,
   resendCodeHandler,
   cafeInfoHandler,
   loginHandler,
+  showMenu,
 };
