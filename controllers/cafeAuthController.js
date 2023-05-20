@@ -187,9 +187,51 @@ const showMenu = async (req, res) => {
     });
     menu.push({
       name: index.name,
-      items: items,
+      goods: items,
     });
   });
+};
+
+const addItem = async (req, res) => {
+  const cafeId = req.body.cafeId;
+  const categoryId = req.body.categoryId;
+  const itemobj = {
+    ...req.body,
+    name: '',
+    price: '',
+    picture: '',
+    categoryId: '',
+  };
+  try {
+    const newItem = await Item.create(itemobj);
+    await Item.save();
+  } catch (error) {
+    const errArray = [];
+    error.errors.forEach((e) => errArray.push(e.message));
+    return res.status(422).json({
+      successfull: false,
+      message: errArray,
+    });
+  }
+};
+
+const createCategory = async (req, res) => {
+  const catobj = {
+    ...req.body,
+    name: '',
+    cafeId: '',
+  };
+  try {
+    const newCategory = await Category.create(catobj);
+    await Category.save();
+  } catch (error) {
+    const errArray = [];
+    error.errors.forEach((e) => errArray.push(e.message));
+    return res.status(422).json({
+      successfull: false,
+      message: errArray,
+    });
+  }
 };
 
 module.exports = {
@@ -199,4 +241,6 @@ module.exports = {
   cafeInfoHandler,
   loginHandler,
   showMenu,
+  createCategory,
+  addItem
 };
