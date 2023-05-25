@@ -174,73 +174,10 @@ const loginHandler = async (req, res) => {
   res.status(200).json({ successfull: true, message: 'ورود موفقیت آمیز بود' });
 };
 
-const showMenu = async (req, res) => {
-  let menu = [];
-  let items = [];
-  const cafeId = req.body.cafe_id;
-  const category = await Category.findAll({ where: { cafeId } });
-  category.forEach(async (index) => {
-    const indexId = index.id;
-    const itemofCategory = await Item.findAll({ where: { indexId } });
-    itemofCategory.forEach(async (eachitem) => {
-      items.push(eachitem);
-    });
-    menu.push({
-      name: index.name,
-      goods: items,
-    });
-  });
-};
-
-const addItem = async (req, res) => {
-  const cafeId = req.body.cafeId;
-  const categoryId = req.body.categoryId;
-  const itemobj = {
-    ...req.body,
-    name: '',
-    price: '',
-    picture: '',
-    categoryId: '',
-  };
-  try {
-    const newItem = await Item.create(itemobj);
-    await Item.save();
-  } catch (error) {
-    const errArray = [];
-    error.errors.forEach((e) => errArray.push(e.message));
-    return res.status(422).json({
-      successfull: false,
-      message: errArray,
-    });
-  }
-};
-
-const createCategory = async (req, res) => {
-  const catobj = {
-    ...req.body,
-    name: '',
-    cafeId: '',
-  };
-  try {
-    const newCategory = await Category.create(catobj);
-    await Category.save();
-  } catch (error) {
-    const errArray = [];
-    error.errors.forEach((e) => errArray.push(e.message));
-    return res.status(422).json({
-      successfull: false,
-      message: errArray,
-    });
-  }
-};
-
 module.exports = {
   registerHandler,
   verifyCodeHandler,
   resendCodeHandler,
   cafeInfoHandler,
   loginHandler,
-  showMenu,
-  createCategory,
-  addItem
 };

@@ -11,7 +11,7 @@ const Item = sequelize.define('items', {
     allowNull: false,
   },
   picture: {
-    type: DataTypes.STRING,
+    type: DataTypes.JSON,
     allowNull: true,
   },
 });

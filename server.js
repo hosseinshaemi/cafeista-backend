@@ -4,6 +4,7 @@ const cors = require('cors');
 const cookies = require('cookie-parser');
 const userAuthRoute = require('./routes/userAuthRoutes');
 const cafeAuthRoute = require('./routes/cafeAuthRoutes');
+const cafeoperations = require('./routes/cafeoperations');
 const userAuthorization = require('./middlewares/userAuthorization');
 const app = express();
 const db = require('./configs/database');
@@ -29,6 +30,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use('/api/user', userAuthRoute);
 app.use('/api/cafe', cafeAuthRoute);
+app.use('/api/Menu', cafeoperations);
 
 app.get('/', (req, res) => res.status(200).send('This is an api for cafeista'));
 
