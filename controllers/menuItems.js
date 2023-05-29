@@ -7,7 +7,7 @@ const addItem = async (req, res) => {
   const itemobj = {
     name: property.name,
     price: property.price,
-    picture: req.file.buffer,
+    picture: req.file.originalname,
   };
   console.log(itemobj);
   try {
