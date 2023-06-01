@@ -36,6 +36,10 @@ const User = sequelize.define('users', {
     type: DataTypes.STRING,
     defaultValue: DataTypes.UUIDV4,
   },
+  isAdmin: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
   createdAt: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,

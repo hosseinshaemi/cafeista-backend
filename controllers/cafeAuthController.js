@@ -6,6 +6,7 @@ const {
 const { Cafe, Category, Item } = require('../models');
 const getRandomNumber = require('../utils/random');
 const sendEmail = require('../utils/mailer');
+const errorHandler = require('../utils/errorHandler');
 
 const registerHandler = async (req, res) => {
   const result = cafeSchema.validate(req.body);
@@ -42,12 +43,13 @@ const registerHandler = async (req, res) => {
       .status(200)
       .json({ successfull: true, message: 'کد تایید برای شما ارسال شد' });
   } catch (error) {
-    const errArray = [];
+    /* const errArray = [];
     error.errors.forEach((e) => errArray.push(e.message));
     return res.status(422).json({
       successfull: false,
       message: errArray,
-    });
+    }); */
+    return errorHandler(res, error);
   }
 };
 
@@ -132,12 +134,13 @@ const cafeInfoHandler = async (req, res) => {
   try {
     await cafe.save();
   } catch (error) {
-    const errArray = [];
+    /* const errArray = [];
     error.errors.forEach((e) => errArray.push(e.message));
     return res.status(422).json({
       successfull: false,
       message: errArray,
-    });
+    }); */
+    return errorHandler(res, error);
   }
 
   return res
