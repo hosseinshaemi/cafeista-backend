@@ -3,6 +3,7 @@ const authValidator = require('../models/validators/userAuthValidator');
 const { User } = require('../models');
 const getRandomNumber = require('../utils/random');
 const sendEmail = require('../utils/mailer');
+const errorHandler = require('../utils/errorHandler');
 
 const registerHandler = async (req, res) => {
   const result = authValidator.validate(req.body);
@@ -28,12 +29,13 @@ const registerHandler = async (req, res) => {
       .status(200)
       .json({ successfull: true, message: 'ثبت نام موفقیت آمیز بود' });
   } catch (error) {
-    const errArray = [];
+    /* const errArray = [];
     error.errors.forEach((e) => errArray.push(e.message));
     return res.status(422).json({
       successfull: false,
       message: errArray,
-    });
+    }); */
+    return errorHandler(res, error);
   }
 };
 
@@ -92,7 +94,7 @@ const loginHandler = async (req, res) => {
       .json({ successfull: false, message: 'کاربری با این مشخصات یافت نشد' });
   }
 
-  if (!uesr.isVerified) {
+  if (!user.isVerified) {
     return res
       .status(401)
       .json({ successfull: false, message: 'حساب نیازمند تایید است' });
