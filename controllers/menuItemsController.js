@@ -1,4 +1,5 @@
-const { Cafe, Category, Item } = require('../models');
+const { Cafe, Category, Item, User } = require('../models');
+const errorHandler = require('../utils/errorHandler');
 
 const addItem = async (req, res) => {
   const cafeId = req.body.cafeId;
@@ -18,31 +19,36 @@ const addItem = async (req, res) => {
       message: 'آیتم با موفقیت اضافه شد',
     });
   } catch (error) {
-    const errArray = [];
+    /* const errArray = [];
     error.errors.forEach((e) => errArray.push(e.message));
     return res.status(422).json({
       successfull: false,
       message: errArray,
-    });
+    }); */
+    return errorHandler(res, error);
   }
 };
 
 const createCategory = async (req, res) => {
-  const catobj = {
-    ...req.body,
-    name: '',
-    cafeId: '',
-  };
   try {
-    const newCategory = await Category.create(catobj);
-    await Category.save();
+    const caf = await Cafe.findOne({ where: { id: req.body.cafeId } });
+    const cat = await Category.create({
+      name: req.body.name,
+    });
+    caf.addCategory(cat);
+
+    res.status(200).json({
+      successfull: true,
+      message: 'طبقه بندی اضافه شد',
+    });
   } catch (error) {
-    const errArray = [];
+    /* const errArray = [];
     error.errors.forEach((e) => errArray.push(e.message));
     return res.status(422).json({
       successfull: false,
       message: errArray,
-    });
+    }); */
+    return errorHandler(res, error);
   }
 };
 
@@ -50,18 +56,19 @@ const showMenu = async (req, res) => {
   let menu = [];
   let items = [];
   const cafeId = req.body.cafe_id;
-  const category = await Category.findAll({ where: { cafeId } });
-  category.forEach(async (index) => {
-    const indexId = index.id;
-    const itemofCategory = await Item.findAll({ where: { indexId } });
-    itemofCategory.forEach(async (eachitem) => {
-      items.push(eachitem);
+  try {
+    const category = await Category.findAll({ where: { cafeId } });
+    category.forEach(async (index) => {
+      const indexId = index.id;
+      const itemofCategory = await Item.findAll({ where: { indexId } });
+      menu.push({
+        name: index.name,
+        goods: itemofCategory,
+      });
     });
-    menu.push({
-      name: index.name,
-      goods: items,
-    });
-  });
+  } catch (error) {
+    return errorHandler(res, error);
+  }
 };
 
 module.exports = {
