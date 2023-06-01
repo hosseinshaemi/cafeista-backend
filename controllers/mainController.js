@@ -1,8 +1,8 @@
 const { Cafe, User, Comment } = require('../models');
 
-const getBest = async (req, res) => {
-  const cafes = await Cafe.findAll({ include: { model: Comment } });
+const getBest = async (req, res) => {  
   try {
+    const cafes = await Cafe.findAll({ include: { model: Comment } });
     const dto = cafes.map((item) => ({
       name: item.cafename,
       pictures: ['test1.jpg', 'test2.jpg'],
@@ -14,9 +14,7 @@ const getBest = async (req, res) => {
       score /= item.comments.length;
       item.score = score;
     }
-
     for (let item of dto) delete item.comments;
-
     dto.sort((a, b) => b.score - a.score);
 
     return res.status(200).json({
@@ -40,6 +38,7 @@ const getFavorites = async (req, res) => {
         { model: Comment },
       ],
     });
+
     const dto = cafes.map((item) => ({
       name: item.cafename,
       pictures: ['test1.jpg', 'test2.jpg'],
@@ -52,8 +51,10 @@ const getFavorites = async (req, res) => {
       item.score = score;
     }
 
+
     for (let item of dto) delete item.comments;
     dto.sort((a, b) => b.score - a.score);
+
     return res.status(200).json({
       success: true,
       message: dto,

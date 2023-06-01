@@ -11,12 +11,15 @@ const cafeAuthRoute = require('./routes/cafeAuthRoutes');
 const cafeOperations = require('./routes/cafeOperationsRoutes');
 const userProfileRoute = require('./routes/userProfileRoutes');
 const adminRoute = require('./routes/adminRoutes');
+
 const mainRoute = require('./routes/mainRoutes');
+
 // import routes - end
 
 // import middlewares
 const userAuthorization = require('./middlewares/userAuthorization');
 const cafeAuthorization = require('./middlewares/cafeAuthorization');
+const adminAuthorization = require('./middlewares/adminAuthorization');
 // import routes - end
 
 // start app

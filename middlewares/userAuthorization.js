@@ -10,8 +10,6 @@ const userAuthorization = async (req, res, next) => {
     if (!user) return res.status(401).json({ status: 'unauthorized' });
 
     req.user = decoded;
-    // console.log(decoded);
-    // console.log(req.user);
     next();
   });
 };
