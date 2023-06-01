@@ -1,6 +1,6 @@
 const { Cafe, User, Comment } = require('../models');
 
-const getBest = async (req, res) => {
+const getBest = async (req, res) => {  
   try {
     const cafes = await Cafe.findAll({ include: { model: Comment } });
     const dto = cafes.map((item) => ({
@@ -8,14 +8,13 @@ const getBest = async (req, res) => {
       pictures: ['test1.jpg', 'test2.jpg'],
       comments: item.comments,
     }));
-
     for (let item of dto) {
       let score = 0.0;
       for (let com of item.comments) score += com.score;
       score /= item.comments.length;
       item.score = score;
     }
-
+    for (let item of dto) delete item.comments;
     dto.sort((a, b) => b.score - a.score);
 
     return res.status(200).json({
@@ -34,7 +33,10 @@ const getFavorites = async (req, res) => {
   try {
     const email = req.user.email;
     const cafes = await Cafe.findAll({
-      include: { model: User, where: { email } },
+      include: [
+        { model: User, where: { email }, through: 'favorites' },
+        { model: Comment },
+      ],
     });
 
     const dto = cafes.map((item) => ({
@@ -42,7 +44,6 @@ const getFavorites = async (req, res) => {
       pictures: ['test1.jpg', 'test2.jpg'],
       comments: item.comments,
     }));
-
     for (let item of dto) {
       let score = 0.0;
       for (let com of item.comments) score += com.score;
@@ -50,6 +51,8 @@ const getFavorites = async (req, res) => {
       item.score = score;
     }
 
+
+    for (let item of dto) delete item.comments;
     dto.sort((a, b) => b.score - a.score);
 
     return res.status(200).json({
