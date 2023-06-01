@@ -69,6 +69,11 @@ const Cafe = sequelize.define('cafes', {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
+  clientperHour: {
+    type: DataTypes.DOUBLE,
+    allowNull: false,
+    defaultValue: 0.0,
+  },
 });
 
 module.exports = Cafe;
