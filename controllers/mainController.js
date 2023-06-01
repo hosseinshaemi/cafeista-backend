@@ -1,6 +1,6 @@
-const { Cafe, User, Comment } = require('../models');
+const { Cafe, User, Comment, Category, Item } = require('../models');
 
-const getBest = async (req, res) => {  
+const getBest = async (req, res) => {
   try {
     const cafes = await Cafe.findAll({ include: { model: Comment } });
     const dto = cafes.map((item) => ({
@@ -51,7 +51,6 @@ const getFavorites = async (req, res) => {
       item.score = score;
     }
 
-
     for (let item of dto) delete item.comments;
     dto.sort((a, b) => b.score - a.score);
 
@@ -67,7 +66,50 @@ const getFavorites = async (req, res) => {
   }
 };
 
-const getSpecificCafe = async (req, res) => {};
+const getSpecificCafe = async (req, res) => {
+  let menu = [];
+  try {
+    const cafe = await Cafe.findByPk(req.body.cafeId);
+    const category = await Category.findAll({
+      where: { cafeId: req.body.cafeId },
+      attributes: { exclude: ['createdAt', 'updatedAt'] },
+    });
+    for (let item of category) {
+      const itemofCategory = await Item.findAll({
+        where: { categoryId: item.id },
+        attributes: { exclude: ['createdAt', 'updatedAt'] },
+      });
+      menu.push({
+        name: item.name,
+        goods: itemofCategory,
+      });
+    }
+    const comments = await Comment.findAll({
+      where: { cafeId: req.body.cafeId },
+      attributes: { exclude: ['createdAt', 'updatedAt'] },
+      include: { model: User, attributes: ['firstname', 'lastname'] },
+    });
+    console.log(comments);
+    let score = 0.0;
+    for (let item of comments) {
+      score += item.score;
+      item.score = score;
+    }
+    score /= comments.length;
+
+    res.status(200).json({
+      Menu: menu,
+      Comment: comments,
+      score: score,
+      clientperHour: cafe.clientperHour,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'خطایی در سرور رخ داده است',
+    });
+  }
+};
 
 const markCafe = async (req, res) => {
   try {

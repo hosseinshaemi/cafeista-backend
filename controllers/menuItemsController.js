@@ -1,4 +1,4 @@
-const { Cafe, Category, Item, User } = require('../models');
+const { Cafe, Category, Item } = require('../models');
 const errorHandler = require('../utils/errorHandler');
 
 const addItem = async (req, res) => {
@@ -54,7 +54,6 @@ const createCategory = async (req, res) => {
 
 const showMenu = async (req, res) => {
   let menu = [];
-  let items = [];
   const cafeId = req.body.cafe_id;
   try {
     const category = await Category.findAll({ where: { cafeId } });
