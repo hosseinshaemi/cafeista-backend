@@ -1,4 +1,4 @@
-const { Cafe, User, Comment } = require('../models');
+const { Cafe, User, Comment, Category, Item } = require('../models');
 
 const getBest = async (req, res) => {
   const cafes = await Cafe.findAll({ include: { model: Comment } });
@@ -66,7 +66,39 @@ const getFavorites = async (req, res) => {
   }
 };
 
-const getSpecificCafe = async (req, res) => {};
+const getSpecificCafe = async (req, res) => {
+  let menu = [];
+  try {
+    const category = await Category.findAll({ where: req.body.cafeId });
+    category.forEach(async (index) => {
+      const indexId = index.id;
+      const itemofCategory = await Item.findAll({ where: { indexId } });
+      menu.push({
+        name: index.name,
+        goods: itemofCategory,
+      });
+    });
+    const comments = Comment.findAll({
+      include: { model: User },
+      attributes: ['firstname', 'lastname'],
+    });
+    let score = 0.0;
+    for (let item of comments) {
+      score += item.score;
+      item.score = score;
+    }
+    score /= comments.length;
+
+
+    res.status(200).json({
+      Menu: menu,
+      Comment: comments,
+      score: score
+    });
+  } catch (error) {
+    return errorHandler(res, error);
+  }
+};
 
 const markCafe = async (req, res) => {
   try {
