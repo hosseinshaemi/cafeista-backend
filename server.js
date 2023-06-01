@@ -10,11 +10,13 @@ const userAuthRoute = require('./routes/userAuthRoutes');
 const cafeAuthRoute = require('./routes/cafeAuthRoutes');
 const cafeOperations = require('./routes/cafeOperationsRoutes');
 const userProfileRoute = require('./routes/userProfileRoutes');
+const adminRoute = require('./routes/adminRoutes');
 // import routes - end
 
 // import middlewares
 const userAuthorization = require('./middlewares/userAuthorization');
 const cafeAuthorization = require('./middlewares/cafeAuthorization');
+const adminAuthorization = require('./middlewares/adminAuthorization');
 // import routes - end
 
 // start app
@@ -42,6 +44,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use('/uploads', express.static(__dirname + '/uploads'));
 app.use('/api/user/profile', userAuthorization, userProfileRoute);
+app.use('/api/admin', userAuthorization, adminAuthorization, adminRoute);
 app.use('/api/menu', cafeAuthorization, cafeOperations);
 app.use('/api/user', userAuthRoute);
 app.use('/api/cafe', cafeAuthRoute);
