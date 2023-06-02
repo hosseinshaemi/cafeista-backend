@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --testPathPattern=tests --forceExit --runInBand"
   },
   "keywords": [],
   "author": "",
@@ -23,5 +23,9 @@
     "nodemailer-smtp-transport": "^2.7.4",
     "sequelize": "^6.30.0",
     "sqlite3": "^5.1.6"
+  },
+  "devDependencies": {
+    "jest": "^29.5.0",
+    "supertest": "^6.3.3"
   }
 }

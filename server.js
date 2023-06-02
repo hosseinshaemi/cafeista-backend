@@ -11,9 +11,7 @@ const cafeAuthRoute = require('./routes/cafeAuthRoutes');
 const cafeOperations = require('./routes/cafeOperationsRoutes');
 const userProfileRoute = require('./routes/userProfileRoutes');
 const adminRoute = require('./routes/adminRoutes');
-
 const mainRoute = require('./routes/mainRoutes');
-
 // import routes - end
 
 // import middlewares
@@ -23,17 +21,18 @@ const adminAuthorization = require('./middlewares/adminAuthorization');
 // import routes - end
 
 // start app
+const DEVENV = process.env.DEVENV;
 const app = express();
 const db = require('./configs/database');
 require('./models');
 
 db.authenticate()
-  .then(async () => console.log('connected successfully'))
-  .catch(async (e) => console.log('connection failure'));
+  .then(async () => DEVENV === 'deployment' ? console.log('database connected') : null)
+  .catch(async (e) => DEVENV === 'deployment' ? console.log(e) : null);
 
 db.sync()
-  .then(async (e) => console.log('Tables Synced.'))
-  .catch(async (e) => console.log('Falied to Sync Tables'));
+  .then(async (e) => DEVENV === 'deployment' ? console.log('database synced') : null)
+  .catch(async (e) => DEVENV === 'deployment' ? console.log(e) : null);
 
 app.use(
   cors({
@@ -58,4 +57,8 @@ app.get('/', (req, res) => res.status(200).send('This is an api for cafeista'));
 app.get('*', (req, res) => res.status(404).send('This page not found'));
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT || 3000, () => console.log(`Running on Port ${PORT}`));
+if (DEVENV === 'deployment') {
+  app.listen(PORT || 3000, () => console.log(`Server is running on port ${PORT}`));
+}
+
+module.exports = app;
