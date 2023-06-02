@@ -12,6 +12,15 @@ const addItem = async (req, res) => {
   };
   console.log(itemobj);
   try {
+    const prevItem = await Item.findOne({ where: { name: property.name } });
+
+    if (prevItem) {
+      return res.status(422).json({
+        success: false,
+        message: 'این مورد از قبل اضافه شده است',
+      });
+    }
+
     const newItem = await Item.create(itemobj);
     await newItem.save();
     res.status(200).json({
@@ -32,6 +41,19 @@ const addItem = async (req, res) => {
 const createCategory = async (req, res) => {
   try {
     const caf = await Cafe.findOne({ where: { id: req.body.cafeId } });
+
+    const prevCat = await Category.findOne({
+      where: { name: req.body.name },
+      include: { model: Cafe, where: { id: caf.id } },
+    });
+
+    if (prevCat) {
+      return res.status(422).json({
+        success: false,
+        message: 'این دسته قبلا اضافه شده است',
+      });
+    }
+
     const cat = await Category.create({
       name: req.body.name,
     });
