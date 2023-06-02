@@ -1,4 +1,4 @@
-const { Cafe, Category, Item, User } = require('../models');
+const { Cafe, Category, Item } = require('../models');
 const errorHandler = require('../utils/errorHandler');
 
 const addItem = async (req, res) => {
@@ -16,6 +16,7 @@ const addItem = async (req, res) => {
       where: { name: property.name, categoryId: catId },
     });
 
+
     if (prevItem) {
       return res.status(422).json({
         success: false,
@@ -23,6 +24,7 @@ const addItem = async (req, res) => {
       });
     }
     const cat = await Category.findOne({ where: { categoryId: catId } });
+
     const newItem = await Item.create(itemobj);
     cat.addItem(newItem);
 
