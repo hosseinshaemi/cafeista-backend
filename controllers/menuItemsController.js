@@ -9,13 +9,13 @@ const addItem = async (req, res) => {
     name: property.name,
     price: property.price,
     picture: req.file.originalname,
+    discont: req.body.discout,
   };
   console.log(itemobj);
   try {
     const prevItem = await Item.findOne({
       where: { name: property.name, categoryId: catId },
     });
-
 
     if (prevItem) {
       return res.status(422).json({
@@ -97,8 +97,17 @@ const showMenu = async (req, res) => {
   }
 };
 
+const editCategory = async (req, res) => {
+  try {
+    const category = await Category.findByPk(req.body.catId);
+    cat.name = req.body.name;
+    await cat.save();
+  } catch (error) {}
+};
+
 module.exports = {
   addItem,
   createCategory,
   showMenu,
+  editCategory,
 };

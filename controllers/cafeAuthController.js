@@ -25,7 +25,7 @@ const registerHandler = async (req, res) => {
     cafephonenumber: '',
     address: '',
     location: '',
-    accountNumber: Number.toString(getRandomNumber(10)),
+    accountNumber: '' //Number.toString(getRandomNumber(10)),
   };
 
   try {
@@ -43,13 +43,13 @@ const registerHandler = async (req, res) => {
       .status(200)
       .json({ successfull: true, message: 'کد تایید برای شما ارسال شد' });
   } catch (error) {
-    /* const errArray = [];
+    const errArray = [];
     error.errors.forEach((e) => errArray.push(e.message));
     return res.status(422).json({
       successfull: false,
       message: errArray,
-    }); */
-    return errorHandler(res, error);
+    });
+    //return errorHandler(res, error);
   }
 };
 
@@ -76,6 +76,13 @@ const verifyCodeHandler = async (req, res) => {
 
 const resendCodeHandler = async (req, res) => {
   console.log('Request PUT');
+  if (req.body.prevemail) {
+    const prevcafe = await Cafe.findOne({
+      where: { email: req.body.prevemail },
+    });
+    prevcafe.email  = req.body.email;
+    await prevcafe.save();
+  }
   const { email } = req.body;
   const cafe = await Cafe.findOne({ where: { email } });
   if (!cafe)
@@ -101,6 +108,7 @@ const resendCodeHandler = async (req, res) => {
 
 const cafeInfoHandler = async (req, res) => {
   req.body.location = '10.00 10.00';
+  console.log(req.body);
   const result = cafeInfoSchema.validate(req.body);
   if (result.error) {
     const errArray = [];

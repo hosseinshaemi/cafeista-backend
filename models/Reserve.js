@@ -34,6 +34,10 @@ const Reserve = sequelize.define('reserves', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  isAccepted: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
 });
 
 module.exports = Reserve;
