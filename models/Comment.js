@@ -6,6 +6,11 @@ const Comment = sequelize.define('comments', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  score: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+  }
 });
 
 

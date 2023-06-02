@@ -65,6 +65,15 @@ const Cafe = sequelize.define('cafes', {
       msg: 'این شماره حساب برای کافه دیگری ثبت شده است',
     },
   },
+  isVerifiedByAdmin: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
+  clientperHour: {
+    type: DataTypes.DOUBLE,
+    allowNull: false,
+    defaultValue: 0.0,
+  },
 });
 
 module.exports = Cafe;

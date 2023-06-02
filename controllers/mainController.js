@@ -1,8 +1,8 @@
 const { Cafe, User, Comment, Category, Item } = require('../models');
 
 const getBest = async (req, res) => {
-  const cafes = await Cafe.findAll({ include: { model: Comment } });
   try {
+    const cafes = await Cafe.findAll({ include: { model: Comment } });
     const dto = cafes.map((item) => ({
       name: item.cafename,
       pictures: ['test1.jpg', 'test2.jpg'],
@@ -14,9 +14,7 @@ const getBest = async (req, res) => {
       score /= item.comments.length;
       item.score = score;
     }
-
     for (let item of dto) delete item.comments;
-
     dto.sort((a, b) => b.score - a.score);
 
     return res.status(200).json({
@@ -40,6 +38,7 @@ const getFavorites = async (req, res) => {
         { model: Comment },
       ],
     });
+
     const dto = cafes.map((item) => ({
       name: item.cafename,
       pictures: ['test1.jpg', 'test2.jpg'],
@@ -54,6 +53,7 @@ const getFavorites = async (req, res) => {
 
     for (let item of dto) delete item.comments;
     dto.sort((a, b) => b.score - a.score);
+
     return res.status(200).json({
       success: true,
       message: dto,
@@ -69,19 +69,27 @@ const getFavorites = async (req, res) => {
 const getSpecificCafe = async (req, res) => {
   let menu = [];
   try {
-    const category = await Category.findAll({ where: req.body.cafeId });
-    category.forEach(async (index) => {
-      const indexId = index.id;
-      const itemofCategory = await Item.findAll({ where: { indexId } });
+    const cafe = await Cafe.findByPk(req.body.cafeId);
+    const category = await Category.findAll({
+      where: { cafeId: req.body.cafeId },
+      attributes: { exclude: ['createdAt', 'updatedAt'] },
+    });
+    for (let item of category) {
+      const itemofCategory = await Item.findAll({
+        where: { categoryId: item.id },
+        attributes: { exclude: ['createdAt', 'updatedAt'] },
+      });
       menu.push({
-        name: index.name,
+        name: item.name,
         goods: itemofCategory,
       });
+    }
+    const comments = await Comment.findAll({
+      where: { cafeId: req.body.cafeId },
+      attributes: { exclude: ['createdAt', 'updatedAt'] },
+      include: { model: User, attributes: ['firstname', 'lastname'] },
     });
-    const comments = Comment.findAll({
-      include: { model: User },
-      attributes: ['firstname', 'lastname'],
-    });
+    console.log(comments);
     let score = 0.0;
     for (let item of comments) {
       score += item.score;
@@ -89,14 +97,17 @@ const getSpecificCafe = async (req, res) => {
     }
     score /= comments.length;
 
-
     res.status(200).json({
       Menu: menu,
       Comment: comments,
-      score: score
+      score: score,
+      clientperHour: cafe.clientperHour,
     });
   } catch (error) {
-    return errorHandler(res, error);
+    res.status(500).json({
+      success: false,
+      message: 'خطایی در سرور رخ داده است',
+    });
   }
 };
 

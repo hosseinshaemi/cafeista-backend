@@ -10,6 +10,14 @@ const Reserve = sequelize.define('reserves', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  start: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  end: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   number: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -22,9 +30,9 @@ const Reserve = sequelize.define('reserves', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  isAccepted: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
+  description: {
+    type: DataTypes.STRING,
+    allowNull: true,
   },
 });
 
