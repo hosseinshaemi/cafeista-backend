@@ -3,7 +3,7 @@ const errorHandler = require('../utils/errorHandler');
 
 const addItem = async (req, res) => {
   const cafeId = req.body.cafeId;
-  const categoryId = req.body.categoryId;
+  const catId = req.body.categoryId;
   const property = JSON.parse(req.body.properties);
   const itemobj = {
     name: property.name,
@@ -12,7 +12,9 @@ const addItem = async (req, res) => {
   };
   console.log(itemobj);
   try {
-    const prevItem = await Item.findOne({ where: { name: property.name } });
+    const prevItem = await Item.findOne({
+      where: { name: property.name, categoryId: catId },
+    });
 
     if (prevItem) {
       return res.status(422).json({
@@ -20,9 +22,10 @@ const addItem = async (req, res) => {
         message: 'این مورد از قبل اضافه شده است',
       });
     }
-
+    const cat = await Category.findOne({ where: { categoryId: catId } });
     const newItem = await Item.create(itemobj);
-    await newItem.save();
+    cat.addItem(newItem);
+
     res.status(200).json({
       successfull: true,
       message: 'آیتم با موفقیت اضافه شد',
