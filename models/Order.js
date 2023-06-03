@@ -17,6 +17,10 @@ const Order = sequelize.define('orders', {
   paymentCode: {
     type: DataTypes.STRING,
   },
+  isAccepted: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
 });
 
 module.exports = Order;

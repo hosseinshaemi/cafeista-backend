@@ -14,7 +14,10 @@ const Item = sequelize.define('items', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  discount: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+  },
 });
-
 
 module.exports = Item;

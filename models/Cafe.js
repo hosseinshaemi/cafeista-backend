@@ -74,6 +74,14 @@ const Cafe = sequelize.define('cafes', {
     allowNull: false,
     defaultValue: 0.0,
   },
+  wallet: {
+    type: DataTypes.DOUBLE,
+    defaultValue: 0,
+  },
+  pictures: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
 });
 
 module.exports = Cafe;
