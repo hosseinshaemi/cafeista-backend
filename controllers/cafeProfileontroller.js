@@ -1,4 +1,5 @@
 const { Cafe } = require('../models');
+const errorHandler = require('../utils/errorHandler');
 
 const getProfile = async (req, res) => {
   const { email } = req.user;
@@ -56,21 +57,34 @@ const updateGallery = async (req, res) => {
     for (let file in req.files)
       if (!cafe.pictures.include(file.originalname))
         cafe.pictures.push(file.originalname);
-  } catch (error) {}
+  } catch (error) {
+    return errorHandler(error, res);
+  }
 };
 
 const deleteAccount = async (req, res) => {
   try {
     const cafe = await Cafe.findByPk(req.body.cafeId);
     await cafe.destroy();
-  } catch (error) {}
+  } catch (error) {
+    return errorHandler(error, res);
+  }
 };
 
-const getWallet = async (req, res) => {};
+const getWallet = async (req, res) => {
+  try {
+    const cafe = await Cafe.findByPk(req.body.cafeId);
+    return res.status(200).json({
+      success: true,
+      message: cafe.Wallet,
+    });
+  } catch (error) {}
+};
 
 module.exports = {
   getProfile,
   updateCafeProfile,
   updateGallery,
   deleteAccount,
+  getWallet,
 };

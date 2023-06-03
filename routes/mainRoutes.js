@@ -11,6 +11,6 @@ route.get('/getspecificcafe', mainController.getSpecificCafe);
 
 route.post('/markcafe', mainController.markCafe);
 
-route.get('/gethistory', historyOrderController.getUserHistory);
+
 
 module.exports = route;

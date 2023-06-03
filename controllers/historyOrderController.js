@@ -1,4 +1,5 @@
 const { Cafe, User, Order, OrderItem, Item } = require('../models');
+const errorHandler = require('../utils/errorHandler');
 
 const getUserHistory = async (req, res) => {
   const email = req.user.email;
@@ -28,13 +29,20 @@ const getCafeHistory = async (req, res) => {
     const ords = await Order.findAll({
       where: { cafeId: req.body.cafeId },
       include: {
-        model: OrderItem,
-        include: [{ model: Item, attributes: ['name', 'price'] }],
-        attributes: ['count'],
+        model: Item,
+        through: { as: OrderItem, attributes: [] },
+        attributes: { exclude: ['createdAt', 'updatedAt'] },
       },
-      attributes: 'description',
+      attributes: { exclude: ['createdAt', 'updatedAt'] },
     });
-  } catch (error) {}
+    console.log(ords);
+    res.status(200).json({
+      success: true,
+      message: ords,
+    });
+  } catch (error) {
+    return errorHandler(error, res);
+  }
 };
 
 module.exports = {
