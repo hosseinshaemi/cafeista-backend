@@ -33,7 +33,7 @@ db.authenticate()
 
 db.sync()
   .then(async (e) => console.log('Tables Synced.'))
-  .catch(async (e) => console.log('Falied to Sync Tables'));
+  .catch(async (e) => console.log(e));
 
 app.use(
   cors({

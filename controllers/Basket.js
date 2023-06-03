@@ -20,3 +20,7 @@ const setOrder = async (req, res) => {
   cafe.addOrder(order);
   user.addOrder(order);
 };
+
+module.exports = {
+  setOrder,
+};

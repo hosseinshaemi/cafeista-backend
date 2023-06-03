@@ -15,7 +15,7 @@ const Item = sequelize.define('items', {
     allowNull: true,
   },
   discount: {
-    type: DataTypes.BOOLEAN,
+    type: DataTypes.INTEGER,
     defaultValue: 0,
   },
 });

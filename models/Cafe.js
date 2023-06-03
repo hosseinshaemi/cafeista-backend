@@ -79,7 +79,7 @@ const Cafe = sequelize.define('cafes', {
     defaultValue: 0,
   },
   pictures: {
-    type: DataTypes.ARRAY(DataTypes.STRING),
+    type: DataTypes.STRING,
     allowNull: true,
   },
 });

@@ -5,6 +5,6 @@ const route = express.Router();
 
 route.post('/addCategory', menu.createCategory);
 route.post('/addItem', upload.single('file'), menu.addItem);
-route.post('/showMenu', menu.showMenu);
+route.get('/showMenu', menu.showMenu);
 
 module.exports = route;

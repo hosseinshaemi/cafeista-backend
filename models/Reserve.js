@@ -36,7 +36,7 @@ const Reserve = sequelize.define('reserves', {
   },
   isAccepted: {
     type: DataTypes.BOOLEAN,
-    defaultValue: false,
+    defaultValue: 0,
   },
 });
 

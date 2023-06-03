@@ -6,6 +6,7 @@ const {
   Order,
   OrderItem,
   Table,
+  TableDate,
 } = require('../models');
 const errorHandler = require('../utils/errorHandler');
 
@@ -80,8 +81,14 @@ const showTable = async (req, res) => {
 
 const assignTable = async (req, res) => {
   try {
-    const table = await Table.findByPk(req.body.tableid)
-    } catch (error) {}
+    const table = await Table.findOne({
+      where: { id: req.body.tableId },
+    });
+    const tableDate = await TableDate.create({
+      date: req.body.date,
+    });
+    table.addTableDate(tableDate);
+  } catch (error) {}
 };
 
 module.exports = {
@@ -89,4 +96,5 @@ module.exports = {
   inQueueResv,
   acceptedords,
   inQueueOrds,
+  assignTable,
 };
