@@ -22,10 +22,10 @@ const registerHandler = async (req, res) => {
   const cafeObj = {
     ...req.body,
     cafename: '',
-    cafephonenumber: '',
+    cafephonenumber: `09${getRandomNumber(9).toString()}`,
     address: '',
-    location: '',
-    accountNumber: '' //Number.toString(getRandomNumber(10)),
+    location: `${getRandomNumber(2).toString()}.00 ${getRandomNumber(2).toString()}.00`,
+    accountNumber: getRandomNumber(10).toString(),
   };
 
   try {
