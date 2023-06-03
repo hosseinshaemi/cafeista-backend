@@ -4,15 +4,18 @@ const getBest = async (req, res) => {
   try {
     const cafes = await Cafe.findAll({ include: { model: Comment } });
     const dto = cafes.map((item) => ({
-      name: item.cafename,
-      pictures: ['test1.jpg', 'test2.jpg'],
+      id: item.id,
+      location: item.address.split(' ')[0],
+      name: item.cafename.split(' ')[0] + '...',
+      image:
+        'https://img.freepik.com/free-photo/cup-coffee-with-drawn-heart_1286-225.jpg?size=626&ext=jpg&ga=GA1.2.2124743745.1678829291&semt=sph',
       comments: item.comments,
     }));
     for (let item of dto) {
       let score = 0.0;
       for (let com of item.comments) score += com.score;
       score /= item.comments.length;
-      item.score = score;
+      item.score = score.toFixed(2);
     }
     for (let item of dto) delete item.comments;
     dto.sort((a, b) => b.score - a.score);
@@ -40,15 +43,18 @@ const getFavorites = async (req, res) => {
     });
 
     const dto = cafes.map((item) => ({
-      name: item.cafename,
-      pictures: ['test1.jpg', 'test2.jpg'],
+      id: item.id,
+      name: item.cafename.split(' ')[0] + '...',
+      location: item.address.split(' ')[0],
+      image:
+        'https://img.freepik.com/free-photo/cup-coffee-with-drawn-heart_1286-225.jpg?size=626&ext=jpg&ga=GA1.2.2124743745.1678829291&semt=sph',
       comments: item.comments,
     }));
     for (let item of dto) {
       let score = 0.0;
       for (let com of item.comments) score += com.score;
       score /= item.comments.length;
-      item.score = score;
+      item.score = score.toFixed(2);
     }
 
     for (let item of dto) delete item.comments;

@@ -37,7 +37,7 @@ db.sync()
 
 app.use(
   cors({
-    origin: ['http://localhost:3001', 'http://localhost:3002'],
+    origin: ['http://localhost:3001','http://localhost:3000'],
     credentials: true,
   })
 );
@@ -50,6 +50,7 @@ app.use('/api/user/profile', userAuthorization, userProfileRoute);
 app.use('/api/admin', userAuthorization, adminAuthorization, adminRoute);
 app.use('/api/cafes', userAuthorization, mainRoute);
 app.use('/api/menu', cafeAuthorization, cafeOperations);
+
 app.use('/api/user', userAuthRoute);
 app.use('/api/cafe', cafeAuthRoute);
 
